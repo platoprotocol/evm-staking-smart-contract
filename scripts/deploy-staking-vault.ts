@@ -9,7 +9,6 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   const deployerAddress = await deployer.getAddress();
   const tokenAddress = FAT_TOKEN_ADDRESS;
-  const feeAddress = deployerAddress;
   const apyPercentage = 50;
   const apyDuration = 10; // seconds
   const exitPenaltyPercentage = 5;
@@ -18,7 +17,6 @@ async function main() {
   console.log({
     deployerAddress,
     tokenAddress,
-    feeAddress,
     apyPercentage,
     apyDuration,
     exitPenaltyPercentage,
@@ -32,7 +30,6 @@ async function main() {
   console.log("deploying StakingVault");
   const stakingVault = await StakingVault.deploy(
     tokenAddress,
-    feeAddress,
     apyPercentage,
     apyDuration,
     exitPenaltyPercentage,
