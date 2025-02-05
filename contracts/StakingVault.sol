@@ -89,8 +89,9 @@ contract StakingVault is Ownable, Pausable, ReentrancyGuard {
         UserInfo storage user = userInfo[_stakeholder];
         uint256 initialBalance = stakingToken.balanceOf(address(this));
         stakingToken.safeTransferFrom(address(msg.sender), address(this), _amount);
-
         uint256 amountTransferred = stakingToken.balanceOf(address(this)) - initialBalance;
+        require(amountTransferred <= _amount, "Transfer amount exceeds expected");
+
         user.totalStakedAmount += amountTransferred;
         totalStaked += amountTransferred;
         APY memory currentApy = APY({
@@ -100,14 +101,14 @@ contract StakingVault is Ownable, Pausable, ReentrancyGuard {
         // Create a new DepositDetails instance
         DepositDetails memory newDeposit = DepositDetails({
             apy: currentApy,
-            amount: _amount,
+            amount: amountTransferred,
             timestamp: block.timestamp
         });
 
         // Get the index before pushing
         uint256 index = user.deposits.length;
         user.deposits.push(newDeposit);
-        emit Deposit(_stakeholder, _amount, index);
+        emit Deposit(_stakeholder, amountTransferred, index);
     }
 
     function unstakeAllDeposits() public whenNotPaused nonReentrant {
