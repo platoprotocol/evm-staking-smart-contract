@@ -46,7 +46,7 @@ contract StakingVault is Ownable, Pausable, ReentrancyGuard {
 
     /* ------------- EVENTS ------------- */
 
-    event Deposit(address indexed user, uint256 amount);
+    event Deposit(address indexed user, uint256 amount, uint256 index);
     event Withdraw(address indexed user, uint256 amount);
     event StakingReward(address indexed user, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 amount);
@@ -104,8 +104,10 @@ contract StakingVault is Ownable, Pausable, ReentrancyGuard {
             timestamp: block.timestamp
         });
 
+        // Get the index before pushing
+        uint256 index = user.deposits.length;
         user.deposits.push(newDeposit);
-        emit Deposit(_stakeholder, _amount);
+        emit Deposit(_stakeholder, _amount, index);
     }
 
     function unstakeAllDeposits() public whenNotPaused nonReentrant {
